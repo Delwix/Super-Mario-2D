@@ -2,7 +2,6 @@ package com.TETOSOFT.tilegame;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.security.Key;
 import java.util.Iterator;
 
 import com.TETOSOFT.graphics.*;
@@ -22,7 +21,8 @@ public class GameEngine extends GameCore
     }
     
     public static final float GRAVITY = 0.002f;
-    
+
+    private Point currentPoint = new Point();
     private Point pointCache = new Point();
     private TileMap map;
     private MapLoader mapLoader;
@@ -35,6 +35,10 @@ public class GameEngine extends GameCore
     private GameAction exit;
     private GameAction enter;
     private GameAction pause;
+    private int scoreCoin =0;
+    private int score =0;
+    private int topScore =0;
+    private int gameScore =0;
     private int collectedStars=0;
     private int numLives=6;
    
@@ -127,12 +131,33 @@ public class GameEngine extends GameCore
         if (player.isAlive()) 
         {
             float velocityX = 0;
-            if (moveLeft.isPressed()) 
+            currentPoint = getTileCollision(player, player.getX(), player.getY());
+            if (moveLeft.isPressed()) //Calculating the score depending on the movements on the X axis
             {
                 velocityX-=player.getMaxSpeed();
+
+                /*if (currentPoint.getY() != 9.0) {
+                    System.out.println("i moved left !");
+                    currentScoreXaxis = currentScoreXaxis - 0.01;
+                    if (currentScoreXaxis > topScoreXaxis)
+                        topScoreXaxis = (int) currentScoreXaxis;
+                }*/
+
             }
             if (moveRight.isPressed()) {
                 velocityX+=player.getMaxSpeed();
+                score = (int) (player.getX() / 500);
+                score += scoreCoin;
+                if (score > topScore) {
+                    topScore = score;
+                }
+                System.out.println("the score is " + score);
+                /*if (currentPoint.getY() != 9.0) {
+                    System.out.println("i moved right !");
+                    currentScoreXaxis = currentScoreXaxis + 0.01;
+                    if (currentScoreXaxis > topScoreXaxis)
+                        topScoreXaxis = (int) currentScoreXaxis;
+                }*/
             }
             if (jump.isPressed()) {
                 player.jump(false);
@@ -192,6 +217,8 @@ public class GameEngine extends GameCore
                         map.getTile(x, y) != null) {
                     // collision found, return the tile
                     pointCache.setLocation(x, y);
+//                    if (y == 9)
+//                        System.out.println("Oh shit collision happened ! X is " + pointCache.getX() +" and Y is " + pointCache.getY());
                     return pointCache;
                 }
             }
@@ -392,12 +419,17 @@ public class GameEngine extends GameCore
                 // player dies!
                 player.setState(Creature.STATE_DYING);
                 numLives--;
+                if (score > gameScore)
+                    gameScore = score;
+                scoreCoin = 0;
+                score = 0;
                 if(numLives==0) {
                     try {
                         Thread.sleep(3000);
                     } catch (InterruptedException ex) {
                         ex.printStackTrace();
                     }
+                    //Insert final score interface here, and stop it from crashing everytime
                     stop();
                 }
             }
@@ -416,6 +448,8 @@ public class GameEngine extends GameCore
         if (powerUp instanceof PowerUp.Star) {
             // do something here, like give the player points
             collectedStars++;
+            scoreCoin++;
+//            System.out.println("The score is " + score);
             if(collectedStars==100) 
             {
                 numLives++;

@@ -15,7 +15,7 @@ import com.TETOSOFT.tilegame.sprites.*;
     "host" Sprites used in the game. Game Sprites are cloned from
     "host" Sprites.
 */
-public class MapLoader 
+public class MapLoader
 {
     private ArrayList tiles;
     public int currentMap;
