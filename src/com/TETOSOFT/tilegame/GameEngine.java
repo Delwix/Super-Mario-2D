@@ -32,6 +32,7 @@ public class GameEngine extends GameCore
     private GameAction moveRight;
     private GameAction jump;
     private GameAction exit;
+    private GameAction enter;
     private int collectedStars=0;
     private int numLives=6;
    
@@ -61,17 +62,21 @@ public class GameEngine extends GameCore
         super.stop();
         
     }
-    
+
+    public void exitMenu(){
+        super.exitMenu();
+    }
     
     private void initInput() {
         moveLeft = new GameAction("moveLeft");
         moveRight = new GameAction("moveRight");
         jump = new GameAction("jump", GameAction.DETECT_INITAL_PRESS_ONLY);
         exit = new GameAction("exit",GameAction.DETECT_INITAL_PRESS_ONLY);
-        
+        enter = new GameAction("enter", GameAction.DETECT_INITAL_PRESS_ONLY);
         inputManager = new InputManager(screen.getFullScreenWindow());
         inputManager.setCursor(InputManager.INVISIBLE_CURSOR);
-        
+
+        inputManager.mapToKey(enter, KeyEvent.VK_ENTER);
         inputManager.mapToKey(moveLeft, KeyEvent.VK_LEFT);
         inputManager.mapToKey(moveRight, KeyEvent.VK_RIGHT);
         inputManager.mapToKey(jump, KeyEvent.VK_SPACE);
@@ -85,7 +90,9 @@ public class GameEngine extends GameCore
         if (exit.isPressed()) {
             stop();
         }
-        
+        if(enter.isPressed()){
+            exitMenu();
+        }
         Player player = (Player)map.getPlayer();
         if (player.isAlive()) 
         {
@@ -320,7 +327,10 @@ public class GameEngine extends GameCore
         }
         
     }
-    
+
+    public void updateMenu(long elapsedTime){
+        checkInput(elapsedTime);
+    }
     
     /**
      * Checks for Player collision with other Sprites. If
@@ -388,6 +398,21 @@ public class GameEngine extends GameCore
             
         }
     }
-    
+
+    public void drawMenu(Graphics2D g){
+        drawer.draw(g, map, screen.getWidth(), screen.getHeight());
+        g.fill3DRect(screen.getWidth()/2-45,screen.getHeight()/2-20,100,50,true);
+        g.setColor(Color.RED);
+        g.drawString("PLAY (press Enter)",screen.getWidth()/2-15,screen.getHeight()/2+10);
+        g.setColor(Color.WHITE);
+        g.drawString("Press ESC for EXIT.",10.0f,20.0f);
+        g.setColor(Color.GREEN);
+        g.drawString("AAAAAAAA: "+collectedStars,300.0f,20.0f);
+        g.setColor(Color.YELLOW);
+        g.drawString("Bbbb: "+(numLives),500.0f,20.0f );
+        g.setColor(Color.WHITE);
+        g.drawString("Home: "+mapLoader.currentMap,700.0f,20.0f);
+    }
       
+
 }

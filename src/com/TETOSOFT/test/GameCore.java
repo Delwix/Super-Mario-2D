@@ -27,8 +27,8 @@ public abstract class GameCore {
 
     private boolean isRunning;
     protected ScreenManager screen;
-
-
+    private boolean isPaused = false;
+    private boolean inMenu;
     /**
         Signals the game loop that it's time to quit
     */
@@ -36,6 +36,9 @@ public abstract class GameCore {
         isRunning = false;
     }
 
+    public void exitMenu() {
+        inMenu = false;
+    }
 
     /**
         Calls init() and gameLoop()
@@ -43,9 +46,11 @@ public abstract class GameCore {
     public void run() {
         try {
             init();
+            gameMenu();
             gameLoop();
-        }
-        finally {
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
             screen.restoreScreen();
             lazilyExit();
         }
@@ -91,6 +96,7 @@ public abstract class GameCore {
         window.setBackground(Color.BLACK);
         window.setForeground(Color.WHITE);
 
+        inMenu = true;
         isRunning = true;
     }
 
@@ -99,26 +105,55 @@ public abstract class GameCore {
         return new ImageIcon(fileName).getImage();
     }
 
+    public void gameMenu() throws InterruptedException {
+        long startTime = System.currentTimeMillis();
+        long currTime = startTime;
+
+        while(inMenu){
+            long elapsedTime =
+                    System.currentTimeMillis() - currTime;
+            currTime += elapsedTime;
+
+            updateMenu(elapsedTime);
+            Graphics2D g = screen.getGraphics();
+            drawMenu(g);
+            g.dispose();
+            screen.update();
+        }
+    }
+
+
+    public abstract void drawMenu(Graphics2D g);
 
     /**
         Runs through the game loop until stop() is called.
     */
-    public void gameLoop() {
+    public void gameLoop() throws InterruptedException {
         long startTime = System.currentTimeMillis();
         long currTime = startTime;
 
         while (isRunning) {
-            long elapsedTime =
-                System.currentTimeMillis() - currTime;
-            currTime += elapsedTime;
+            if(isPaused){
+                /*Graphics2D g = screen.getGraphics();
+                draw(g);
+                g.dispose();
+                Thread.sleep(6000);
 
-            // update
-            update(elapsedTime);
+                isPaused = false;*/
+            }
+            else{
+                long elapsedTime =
+                        System.currentTimeMillis() - currTime;
+                currTime += elapsedTime;
 
-            // draw the screen
-            Graphics2D g = screen.getGraphics();
-            draw(g);
-            g.dispose();
+                // update
+                update(elapsedTime);
+
+                // draw the screen
+                Graphics2D g = screen.getGraphics();
+                draw(g);
+                g.dispose();
+            }
             screen.update();
 
             // don't take a nap! run as fast as possible
@@ -137,7 +172,7 @@ public abstract class GameCore {
     public void update(long elapsedTime) {
         // do nothing
     }
-
+    public void updateMenu(long elapsedTime){}
 
     /**
         Draws to the screen. Subclasses must override this
