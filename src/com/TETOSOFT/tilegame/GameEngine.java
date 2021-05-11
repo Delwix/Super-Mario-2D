@@ -66,7 +66,11 @@ public class GameEngine extends GameCore
     public void exitMenu(){
         super.exitMenu();
     }
-    
+
+    public void exitGame(){
+        super.exitGame();
+    }
+
     private void initInput() {
         moveLeft = new GameAction("moveLeft");
         moveRight = new GameAction("moveRight");
@@ -82,7 +86,15 @@ public class GameEngine extends GameCore
         inputManager.mapToKey(jump, KeyEvent.VK_SPACE);
         inputManager.mapToKey(exit, KeyEvent.VK_ESCAPE);
     }
-    
+
+    public void checkInputMenu(){
+        if(exit.isPressed()){
+            exitGame();
+        }
+        if(enter.isPressed()){
+            exitMenu();
+        }
+    }
     
     private void checkInput(long elapsedTime) 
     {
@@ -90,9 +102,7 @@ public class GameEngine extends GameCore
         if (exit.isPressed()) {
             stop();
         }
-        if(enter.isPressed()){
-            exitMenu();
-        }
+
         Player player = (Player)map.getPlayer();
         if (player.isAlive()) 
         {
@@ -329,7 +339,8 @@ public class GameEngine extends GameCore
     }
 
     public void updateMenu(long elapsedTime){
-        checkInput(elapsedTime);
+        checkInputMenu();
+
     }
     
     /**
@@ -402,9 +413,16 @@ public class GameEngine extends GameCore
     public void drawMenu(Graphics2D g){
         drawer.draw(g, map, screen.getWidth(), screen.getHeight());
         g.fill3DRect(screen.getWidth()/2-45,screen.getHeight()/2-20,100,50,true);
+
         g.setColor(Color.RED);
         g.drawString("PLAY (press Enter)",screen.getWidth()/2-15,screen.getHeight()/2+10);
+
         g.setColor(Color.WHITE);
+        g.fill3DRect(screen.getWidth()/2-45,screen.getHeight()/2+50,100,50,true);
+
+        g.setColor(Color.RED);
+        g.drawString("EXIT (press Exit)",screen.getWidth()/2-15,screen.getHeight()/2+75);
+
         g.drawString("Press ESC for EXIT.",10.0f,20.0f);
         g.setColor(Color.GREEN);
         g.drawString("AAAAAAAA: "+collectedStars,300.0f,20.0f);

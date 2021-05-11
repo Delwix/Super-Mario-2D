@@ -40,6 +40,10 @@ public abstract class GameCore {
         inMenu = false;
     }
 
+    public void exitGame() {
+        screen.restoreScreen();
+        lazilyExit();
+    }
     /**
         Calls init() and gameLoop()
     */
@@ -133,10 +137,13 @@ public abstract class GameCore {
         long currTime = startTime;
 
         while (isRunning) {
+            // For pause make sure to "freeze" time or else the creatures will teleport
             if(isPaused){
+
                 /*Graphics2D g = screen.getGraphics();
                 draw(g);
                 g.dispose();
+
                 Thread.sleep(6000);
 
                 isPaused = false;*/
