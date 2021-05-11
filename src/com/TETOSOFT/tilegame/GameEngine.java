@@ -2,6 +2,7 @@ package com.TETOSOFT.tilegame;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.security.Key;
 import java.util.Iterator;
 
 import com.TETOSOFT.graphics.*;
@@ -33,6 +34,7 @@ public class GameEngine extends GameCore
     private GameAction jump;
     private GameAction exit;
     private GameAction enter;
+    private GameAction pause;
     private int collectedStars=0;
     private int numLives=6;
    
@@ -71,15 +73,22 @@ public class GameEngine extends GameCore
         super.exitGame();
     }
 
+    public void pauseGame(){
+        super.pauseGame();
+    }
+
     private void initInput() {
         moveLeft = new GameAction("moveLeft");
         moveRight = new GameAction("moveRight");
         jump = new GameAction("jump", GameAction.DETECT_INITAL_PRESS_ONLY);
         exit = new GameAction("exit",GameAction.DETECT_INITAL_PRESS_ONLY);
         enter = new GameAction("enter", GameAction.DETECT_INITAL_PRESS_ONLY);
+        pause = new GameAction("pause",GameAction.DETECT_INITAL_PRESS_ONLY);
+
         inputManager = new InputManager(screen.getFullScreenWindow());
         inputManager.setCursor(InputManager.INVISIBLE_CURSOR);
 
+        inputManager.mapToKey(pause, KeyEvent.VK_P);
         inputManager.mapToKey(enter, KeyEvent.VK_ENTER);
         inputManager.mapToKey(moveLeft, KeyEvent.VK_LEFT);
         inputManager.mapToKey(moveRight, KeyEvent.VK_RIGHT);
@@ -95,7 +104,15 @@ public class GameEngine extends GameCore
             exitMenu();
         }
     }
-    
+
+    public void checkInputPause(){
+        if(pause.isPressed()){
+            pauseGame();
+        }
+        if(exit.isPressed()){
+            exitGame();
+        }
+    }
     private void checkInput(long elapsedTime) 
     {
         
@@ -103,6 +120,9 @@ public class GameEngine extends GameCore
             stop();
         }
 
+        if (pause.isPressed()){
+            pauseGame();
+        }
         Player player = (Player)map.getPlayer();
         if (player.isAlive()) 
         {
@@ -342,6 +362,9 @@ public class GameEngine extends GameCore
         checkInputMenu();
 
     }
+    public void updatePause(){
+        checkInputPause();
+    }
     
     /**
      * Checks for Player collision with other Sprites. If
@@ -432,5 +455,9 @@ public class GameEngine extends GameCore
         g.drawString("Home: "+mapLoader.currentMap,700.0f,20.0f);
     }
       
-
+    public void drawPause(Graphics2D g){
+        drawer.draw(g, map, screen.getWidth(), screen.getHeight());
+        g.setColor(Color.RED);
+        g.drawString("PAUSED",screen.getWidth()/2-15,screen.getHeight()/2+10);
+    }
 }

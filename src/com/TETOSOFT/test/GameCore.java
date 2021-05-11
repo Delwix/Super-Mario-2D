@@ -44,6 +44,11 @@ public abstract class GameCore {
         screen.restoreScreen();
         lazilyExit();
     }
+
+    public void pauseGame(){
+        isPaused = !isPaused;
+    }
+
     /**
         Calls init() and gameLoop()
     */
@@ -102,6 +107,7 @@ public abstract class GameCore {
 
         inMenu = true;
         isRunning = true;
+        isPaused = false;
     }
 
 
@@ -139,15 +145,12 @@ public abstract class GameCore {
         while (isRunning) {
             // For pause make sure to "freeze" time or else the creatures will teleport
             if(isPaused){
-
-                /*Graphics2D g = screen.getGraphics();
-                draw(g);
+                updatePause();
+                Graphics2D g = screen.getGraphics();
+                drawPause(g);
                 g.dispose();
-
-                Thread.sleep(6000);
-
-                isPaused = false;*/
             }
+
             else{
                 long elapsedTime =
                         System.currentTimeMillis() - currTime;
@@ -180,10 +183,12 @@ public abstract class GameCore {
         // do nothing
     }
     public void updateMenu(long elapsedTime){}
-
+    public void updatePause(){}
     /**
         Draws to the screen. Subclasses must override this
         method.
     */
     public abstract void draw(Graphics2D g);
+    public abstract void drawPause(Graphics2D g);
+
 }
