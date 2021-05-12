@@ -41,7 +41,9 @@ public class GameEngine extends GameCore
     private int gameScore =0;
     private int collectedStars=0;
     private int numLives=6;
-   
+
+    private final Image menuImage = loadImage("images/SuperMarioMenu2.png");
+
     public void init()
     {
         super.init();
@@ -469,16 +471,11 @@ public class GameEngine extends GameCore
 
     public void drawMenu(Graphics2D g){
         drawer.draw(g, map, screen.getWidth(), screen.getHeight());
-        g.fill3DRect(screen.getWidth()/2-45,screen.getHeight()/2-20,100,50,true);
-
-        g.setColor(Color.RED);
-        g.drawString("PLAY (press Enter)",screen.getWidth()/2-15,screen.getHeight()/2+10);
 
         g.setColor(Color.WHITE);
-        g.fill3DRect(screen.getWidth()/2-45,screen.getHeight()/2+50,100,50,true);
-
-        g.setColor(Color.RED);
-        g.drawString("EXIT (press Exit)",screen.getWidth()/2-15,screen.getHeight()/2+75);
+        g.drawString("PLAY (press Enter)",screen.getWidth()/2-80,screen.getHeight()/2+60);
+        g.drawString("OPTIONS",screen.getWidth()/2-80,screen.getHeight()/2+90);
+        g.drawString("EXIT (press Exit)",screen.getWidth()/2-80,screen.getHeight()/2+120);
 
         g.drawString("Press ESC for EXIT.",10.0f,20.0f);
         g.setColor(Color.GREEN);
@@ -487,6 +484,8 @@ public class GameEngine extends GameCore
         g.drawString("Bbbb: "+(numLives),500.0f,20.0f );
         g.setColor(Color.WHITE);
         g.drawString("Home: "+mapLoader.currentMap,700.0f,20.0f);
+
+        g.drawImage(menuImage,screen.getWidth()/3,screen.getHeight()/4,null);
     }
       
     public void drawPause(Graphics2D g){
