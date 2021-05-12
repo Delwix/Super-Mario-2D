@@ -9,6 +9,8 @@ import com.TETOSOFT.input.*;
 import com.TETOSOFT.test.GameCore;
 import com.TETOSOFT.tilegame.sprites.*;
 
+import static java.lang.Math.abs;
+
 /**
  * GameManager manages all parts of the game.
  */
@@ -31,10 +33,13 @@ public class GameEngine extends GameCore
     
     private GameAction moveLeft;
     private GameAction moveRight;
+    private GameAction moveUp;
+    private GameAction moveDown;
     private GameAction jump;
     private GameAction exit;
     private GameAction enter;
     private GameAction pause;
+
     private int scoreCoin =0;
     private int score =0;
     private int topScore =0;
@@ -43,6 +48,7 @@ public class GameEngine extends GameCore
     private int numLives=6;
 
     private final Image menuImage = loadImage("images/SuperMarioMenu2.png");
+    private int selectedOption = 15000;
 
     public void init()
     {
@@ -71,8 +77,8 @@ public class GameEngine extends GameCore
         
     }
 
-    public void exitMenu(){
-        super.exitMenu();
+    public void startGame(){
+        super.startGame();
     }
 
     public void exitGame(){
@@ -86,6 +92,8 @@ public class GameEngine extends GameCore
     private void initInput() {
         moveLeft = new GameAction("moveLeft");
         moveRight = new GameAction("moveRight");
+        moveUp = new GameAction("moveUp",GameAction.DETECT_INITAL_PRESS_ONLY);
+        moveDown = new GameAction("moveDown",GameAction.DETECT_INITAL_PRESS_ONLY);
         jump = new GameAction("jump", GameAction.DETECT_INITAL_PRESS_ONLY);
         exit = new GameAction("exit",GameAction.DETECT_INITAL_PRESS_ONLY);
         enter = new GameAction("enter", GameAction.DETECT_INITAL_PRESS_ONLY);
@@ -93,21 +101,38 @@ public class GameEngine extends GameCore
 
         inputManager = new InputManager(screen.getFullScreenWindow());
         inputManager.setCursor(InputManager.INVISIBLE_CURSOR);
-
         inputManager.mapToKey(pause, KeyEvent.VK_P);
         inputManager.mapToKey(enter, KeyEvent.VK_ENTER);
         inputManager.mapToKey(moveLeft, KeyEvent.VK_LEFT);
         inputManager.mapToKey(moveRight, KeyEvent.VK_RIGHT);
         inputManager.mapToKey(jump, KeyEvent.VK_SPACE);
         inputManager.mapToKey(exit, KeyEvent.VK_ESCAPE);
+        inputManager.mapToKey(moveUp, KeyEvent.VK_UP);
+        inputManager.mapToKey(moveDown, KeyEvent.VK_DOWN);
     }
 
     public void checkInputMenu(){
+        if(moveUp.isPressed()){
+            selectedOption -= 1;
+        }
+        if(moveDown.isPressed()){
+            selectedOption += 1;
+        }
         if(exit.isPressed()){
             exitGame();
         }
         if(enter.isPressed()){
-            exitMenu();
+            switch(selectedOption%3){
+                case 0:
+                    startGame();
+                    break;
+                case 1:
+                    System.out.println("OPTIONS");
+                    break;
+                case 2:
+                    exitGame();
+                    break;
+            }
         }
     }
 
@@ -387,9 +412,8 @@ public class GameEngine extends GameCore
         
     }
 
-    public void updateMenu(long elapsedTime){
+    public void updateMenu(){
         checkInputMenu();
-
     }
     public void updatePause(){
         checkInputPause();
@@ -471,12 +495,34 @@ public class GameEngine extends GameCore
 
     public void drawMenu(Graphics2D g){
         drawer.draw(g, map, screen.getWidth(), screen.getHeight());
+        switch (selectedOption%3){
+            case 0:
+                g.setColor(Color.RED);
+                g.drawString("PLAY",screen.getWidth()/2-60,screen.getHeight()/2+60);
+                g.setColor(Color.WHITE);
+                g.drawString("OPTIONS",screen.getWidth()/2-60,screen.getHeight()/2+90);
+                g.setColor(Color.WHITE);
+                g.drawString("EXIT GAME",screen.getWidth()/2-60,screen.getHeight()/2+120);
+                break;
+            case 1:
+                g.setColor(Color.WHITE);
+                g.drawString("PLAY",screen.getWidth()/2-60,screen.getHeight()/2+60);
+                g.setColor(Color.RED);
+                g.drawString("OPTIONS",screen.getWidth()/2-60,screen.getHeight()/2+90);
+                g.setColor(Color.WHITE);
+                g.drawString("EXIT GAME",screen.getWidth()/2-60,screen.getHeight()/2+120);
+                break;
+            case 2:
+                g.setColor(Color.WHITE);
+                g.drawString("PLAY",screen.getWidth()/2-60,screen.getHeight()/2+60);
+                g.setColor(Color.WHITE);
+                g.drawString("OPTIONS",screen.getWidth()/2-60,screen.getHeight()/2+90);
+                g.setColor(Color.RED);
+                g.drawString("EXIT GAME",screen.getWidth()/2-60,screen.getHeight()/2+120);
+                break;
+        }
 
         g.setColor(Color.WHITE);
-        g.drawString("PLAY (press Enter)",screen.getWidth()/2-80,screen.getHeight()/2+60);
-        g.drawString("OPTIONS",screen.getWidth()/2-80,screen.getHeight()/2+90);
-        g.drawString("EXIT (press Exit)",screen.getWidth()/2-80,screen.getHeight()/2+120);
-
         g.drawString("Press ESC for EXIT.",10.0f,20.0f);
         g.setColor(Color.GREEN);
         g.drawString("AAAAAAAA: "+collectedStars,300.0f,20.0f);
@@ -487,7 +533,7 @@ public class GameEngine extends GameCore
 
         g.drawImage(menuImage,screen.getWidth()/3,screen.getHeight()/4,null);
     }
-      
+
     public void drawPause(Graphics2D g){
         drawer.draw(g, map, screen.getWidth(), screen.getHeight());
         g.setColor(Color.RED);

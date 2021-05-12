@@ -29,6 +29,7 @@ public abstract class GameCore {
     protected ScreenManager screen;
     private boolean isPaused = false;
     private boolean inMenu;
+
     /**
         Signals the game loop that it's time to quit
     */
@@ -36,7 +37,7 @@ public abstract class GameCore {
         isRunning = false;
     }
 
-    public void exitMenu() {
+    public void startGame() {
         inMenu = false;
     }
 
@@ -116,15 +117,8 @@ public abstract class GameCore {
     }
 
     public void gameMenu() throws InterruptedException {
-        long startTime = System.currentTimeMillis();
-        long currTime = startTime;
-
         while(inMenu){
-            long elapsedTime =
-                    System.currentTimeMillis() - currTime;
-            currTime += elapsedTime;
-
-            updateMenu(elapsedTime);
+            updateMenu();
             Graphics2D g = screen.getGraphics();
             drawMenu(g);
             g.dispose();
@@ -182,7 +176,7 @@ public abstract class GameCore {
     public void update(long elapsedTime) {
         // do nothing
     }
-    public void updateMenu(long elapsedTime){}
+    public void updateMenu(){}
     public void updatePause(){}
     /**
         Draws to the screen. Subclasses must override this
