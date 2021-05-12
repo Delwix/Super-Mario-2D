@@ -239,7 +239,7 @@ public class MapLoader
             if (!file.exists()) 
                 break;
             
-            tiles.add(loadImage(name));
+            tiles.add(loadImage("ground.png"));
             ch++;
         }
     }
@@ -327,7 +327,7 @@ public class MapLoader
     {
         // create "goal" sprite
         Animation anim = new Animation();
-        anim.addFrame(loadImage("heart.png"), 150);
+        anim.addFrame(loadImage("home.png"), 150);
         goalSprite = new PowerUp.Goal(anim);
 
         // create "star" sprite
