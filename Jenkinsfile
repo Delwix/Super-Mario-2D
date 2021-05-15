@@ -16,7 +16,7 @@ pipeline {
         }
         stage('Package') {
             steps {
-                bat 'ant Export'
+                bat 'ant package'
             }
         }
     }
