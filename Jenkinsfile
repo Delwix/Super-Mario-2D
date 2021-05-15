@@ -5,13 +5,18 @@ pipeline {
         stage('Build') {
             steps {
                 withAnt(installation:'ant'){
-                    bat 'ant clean compile jar copy-media'
+                    bat 'ant compile'
                 }
             }
         }
-        stage('test') {
+        stage('Test') {
             steps {
-                bat 'echo this is a test'
+                bat 'ant unit-tests'
+            }
+        }
+        stage('Package') {
+            steps {
+                bat 'ant Export'
             }
         }
     }

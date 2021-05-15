@@ -1,30 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="SuperMario2D" basedir=".">
+
+<project name="SuperMario2D" default="compile" basedir=".">
     <description>Builds, tests, and runs the project SuperMario2D.</description>
-    <target name="clean">
+
+    <target name="init">
+        <property file="ant-build.properties"/>
+    </target>
+
+    <target name="clean" depends="init">
         <delete dir="build"/>
     </target>
-    <target name="compile">
+
+    <target name="compile" depends="clean">
         <mkdir dir="build/classes"/>
-        <javac srcdir="src" destdir="build/classes"/>
+        <javac includeantruntime="false" srcdir="src" destdir="build/classes"/>
     </target>
-    <target name="jar">
-        <mkdir dir="build"/>
-        <jar jarfile="build/SuperMario2D.jar" basedir="build/classes">
+
+
+    <target name="copy-media">
+        <copy todir="Export/images">
+            <fileset dir="images" includes="**"/>
+        </copy>
+        <copy todir="Export/maps">
+            <fileset dir="maps" includes="**"/>
+        </copy>
+    </target>
+    <target name="package" depends="compile,copy-media">
+        <mkdir dir="Export"/>
+        <jar jarfile="Export/SuperMario2D.jar" basedir="build/classes">
             <manifest>
                 <attribute name="Main-Class" value="com.TETOSOFT.tilegame.GameEngine"/>
             </manifest>
         </jar>
     </target>
-    <target name="copy-media">
-        <copy todir="build/images">
-            <fileset dir="images" includes="**"/>
-        </copy>
-        <copy todir="build/maps">
-            <fileset dir="maps" includes="**"/>
-        </copy>
-    </target>
+
     <target name="run">
         <java jar="build/SuperMario2D.jar" fork="true"/>
+    </target>
+
+
+    <target name="test-compile" depends="compile">
+        <mkdir dir="build/tests"/>
+        <javac includeantruntime="false" srcdir="test" destdir="build/tests" classpath="${junit_path}"/>
+    </target>
+
+    <target name="unit-tests" depends="test-compile">
+        <mkdir dir="build/reports"/>
+        <junit printsummary="yes" haltonfailure="no">
+            <classpath>
+                <pathelement path="${junit_path}"/>
+                <pathelement path="build/tests"/>
+            </classpath>
+            <formatter type="plain"/>
+            <batchtest fork="yes" todir="build/reports">
+                <fileset dir="test">
+                    <include name="**/*Test*.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
     </target>
 </project>
