@@ -72,3 +72,4 @@ fabric.properties
 ./build/
 ./dist/
 ./nbproject/
+/bin/
