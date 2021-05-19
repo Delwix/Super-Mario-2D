@@ -253,7 +253,7 @@ public class MapLoader
 
         // load left-facing images
         images[0] = new Image[] {
-            loadImage("player.png"),
+        	getMirrorImage(loadImage("player1.png")),
             loadImage("fly1.png"),
             loadImage("fly2.png"),
             loadImage("fly3.png"),
@@ -270,7 +270,7 @@ public class MapLoader
             // right-facing images
             images[1][i] = getMirrorImage(images[0][i]);
             // left-facing "dead" images
-            images[2][0] = loadImage("supermariodie2.png");
+            images[2][0] = loadImage("playerdead.png");
             images[2][1] = loadImage("fly1die.png");
             images[2][2] = loadImage("fly1die.png");
             images[2][3] = loadImage("fly1die.png");
@@ -278,7 +278,7 @@ public class MapLoader
             images[2][5] = loadImage("grub1die1.png");
            
             // right-facing "dead" images
-            images[3][0] = images[2][0];
+            images[3][0] = getMirrorImage(images[2][0]);
             images[3][1] = getFlippedImage(images[2][1]);
             images[3][2] = getFlippedImage(images[2][2]);
             images[3][3] = getFlippedImage(images[2][3]);

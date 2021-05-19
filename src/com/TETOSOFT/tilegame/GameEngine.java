@@ -1,5 +1,6 @@
 package com.TETOSOFT.tilegame;
 
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Iterator;
@@ -21,7 +22,7 @@ public class GameEngine extends GameCore
     {
         new GameEngine().run();
     }
-    
+
     public static final float GRAVITY = 0.002f;
 
     private Point currentPoint = new Point();
@@ -39,6 +40,7 @@ public class GameEngine extends GameCore
     private GameAction exit;
     private GameAction enter;
     private GameAction pause;
+    private GameAction restart;
 
     private int scoreCoin =0;
     private int score =0;
@@ -88,6 +90,10 @@ public class GameEngine extends GameCore
     public void pauseGame(){
         super.pauseGame();
     }
+    
+    public void restartGame(){
+    	new GameEngine().run();
+    }   
 
     private void initInput() {
         moveLeft = new GameAction("moveLeft");
@@ -98,6 +104,7 @@ public class GameEngine extends GameCore
         exit = new GameAction("exit",GameAction.DETECT_INITAL_PRESS_ONLY);
         enter = new GameAction("enter", GameAction.DETECT_INITAL_PRESS_ONLY);
         pause = new GameAction("pause",GameAction.DETECT_INITAL_PRESS_ONLY);
+        restart = new GameAction("restart", GameAction.DETECT_INITAL_PRESS_ONLY);
 
         inputManager = new InputManager(screen.getFullScreenWindow());
         inputManager.setCursor(InputManager.INVISIBLE_CURSOR);
@@ -109,6 +116,7 @@ public class GameEngine extends GameCore
         inputManager.mapToKey(exit, KeyEvent.VK_ESCAPE);
         inputManager.mapToKey(moveUp, KeyEvent.VK_UP);
         inputManager.mapToKey(moveDown, KeyEvent.VK_DOWN);
+        inputManager.mapToKey(restart, KeyEvent.VK_R);
     }
 
     public void checkInputMenu(){
@@ -143,6 +151,9 @@ public class GameEngine extends GameCore
         if(exit.isPressed()){
             exitGame();
         }
+        if(restart.isPressed()){
+            restartGame();
+        }        
     }
     private void checkInput(long elapsedTime) 
     {
@@ -154,6 +165,9 @@ public class GameEngine extends GameCore
         if (pause.isPressed()){
             pauseGame();
         }
+        if (restart.isPressed()){
+            restartGame();
+        }        
         Player player = (Player)map.getPlayer();
         if (player.isAlive()) 
         {
@@ -319,7 +333,7 @@ public class GameEngine extends GameCore
         
         
         // player is dead! start map over
-        if (player.getState() == Creature.STATE_DEAD) {
+        if (player.getState() == Creature.STATE_DEAD) {  	
             map = mapLoader.reloadMap();
             return;
         }
@@ -538,5 +552,15 @@ public class GameEngine extends GameCore
         drawer.draw(g, map, screen.getWidth(), screen.getHeight());
         g.setColor(Color.RED);
         g.drawString("PAUSED",screen.getWidth()/2-15,screen.getHeight()/2+10);
+    }
+ 
+    public void drawGameOver(Graphics2D g){
+        drawer.draw(g, map, screen.getWidth(), screen.getHeight());
+        g.setColor(Color.RED);
+        g.drawString("Game Over",screen.getWidth()/2-15,screen.getHeight()/2+10);
+    }
+    
+    public void GameOver() {
+    	
     }
 }
