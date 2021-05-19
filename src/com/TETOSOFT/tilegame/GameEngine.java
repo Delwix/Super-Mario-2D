@@ -486,7 +486,13 @@ public class GameEngine extends GameCore
                 score = 0;
                 if(numLives==0) {
                     //Insert final score interface here, and stop it from crashing everytime
-                    gameOver();
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }                	
+                    gameOver();                   
+                    super.lazilyExit();
                     
                 }
             }
