@@ -40,7 +40,15 @@ public abstract class GameCore {
     public void startGame() {
         inMenu = false;
     }
+    public void resumeGame()throws InterruptedException {
+        isPaused = false;
+        gameLoop();
+    }
 
+    public void restartGame() throws InterruptedException {
+        isPaused = false;
+        gameLoop();
+    }
     public void exitGame() {
         screen.restoreScreen();
         lazilyExit();
@@ -177,7 +185,7 @@ public abstract class GameCore {
         // do nothing
     }
     public void updateMenu(){}
-    public void updatePause(){}
+    public void updatePause() throws InterruptedException {}
     /**
         Draws to the screen. Subclasses must override this
         method.

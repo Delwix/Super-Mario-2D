@@ -82,6 +82,15 @@ public class GameEngine extends GameCore
         super.startGame();
     }
 
+    public void resumeGame() throws InterruptedException {
+        super.resumeGame();
+    }
+
+    public void restartGame() throws InterruptedException {
+        map = mapLoader.reloadMap();
+        super.restartGame();
+    }
+
     public void exitGame(){
         super.exitGame();
     }
@@ -137,12 +146,36 @@ public class GameEngine extends GameCore
         }
     }
 
-    public void checkInputPause(){
+
+
+    public void checkInputPause() throws InterruptedException {
         if(pause.isPressed()){
             pauseGame();
         }
         if(exit.isPressed()){
             exitGame();
+        }
+        if(moveUp.isPressed()){
+            selectedOption -= 1;
+        }
+        if(moveDown.isPressed()){
+            selectedOption += 1;
+        }
+        if(exit.isPressed()){
+            exitGame();
+        }
+        if(enter.isPressed()){
+            switch(selectedOption%3){
+                case 0:
+                    resumeGame();
+                    break;
+                case 1:
+                    restartGame();
+                    break;
+                case 2:
+                    exitGame();
+                    break;
+            }
         }
     }
     private void checkInput(long elapsedTime) 
@@ -417,7 +450,7 @@ public class GameEngine extends GameCore
     public void updateMenu(){
         checkInputMenu();
     }
-    public void updatePause(){
+    public void updatePause() throws InterruptedException {
         checkInputPause();
     }
     
@@ -538,6 +571,32 @@ public class GameEngine extends GameCore
 
     public void drawPause(Graphics2D g){
         drawer.draw(g, map, screen.getWidth(), screen.getHeight());
+        switch (selectedOption%3){
+            case 0:
+                g.setColor(Color.RED);
+                g.drawString("RESUME",screen.getWidth()/2-60,screen.getHeight()/2+60);
+                g.setColor(Color.WHITE);
+                g.drawString("RESTART",screen.getWidth()/2-60,screen.getHeight()/2+90);
+                g.setColor(Color.WHITE);
+                g.drawString("EXIT GAME",screen.getWidth()/2-60,screen.getHeight()/2+120);
+                break;
+            case 1:
+                g.setColor(Color.WHITE);
+                g.drawString("RESUME",screen.getWidth()/2-60,screen.getHeight()/2+60);
+                g.setColor(Color.RED);
+                g.drawString("RESTART",screen.getWidth()/2-60,screen.getHeight()/2+90);
+                g.setColor(Color.WHITE);
+                g.drawString("EXIT GAME",screen.getWidth()/2-60,screen.getHeight()/2+120);
+                break;
+            case 2:
+                g.setColor(Color.WHITE);
+                g.drawString("RESUME",screen.getWidth()/2-60,screen.getHeight()/2+60);
+                g.setColor(Color.WHITE);
+                g.drawString("RESTART",screen.getWidth()/2-60,screen.getHeight()/2+90);
+                g.setColor(Color.RED);
+                g.drawString("EXIT GAME",screen.getWidth()/2-60,screen.getHeight()/2+120);
+                break;
+        }
         g.setColor(Color.RED);
         g.drawString("PAUSED",screen.getWidth()/2-15,screen.getHeight()/2+10);
     }
