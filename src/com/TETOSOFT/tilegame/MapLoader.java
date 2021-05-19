@@ -275,7 +275,7 @@ public class MapLoader
             // right-facing images
             images[1][i] = getMirrorImage(images[0][i]);
             // left-facing "dead" images
-            images[2][0] = loadImage("p1.png");
+            images[2][0] = loadImage("playerdead.png");
             images[2][1] = loadImage("fly1die.png");
             images[2][2] = loadImage("fly1die.png");
             images[2][3] = loadImage("fly1die.png");
