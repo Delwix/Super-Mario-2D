@@ -48,7 +48,7 @@ public class GameEngine extends GameCore
     private int collectedStars=0;
     private int numLives=6;
 
-    private final Image menuImage = loadImage("images/SuperMarioMenu2.png");
+    private final Image menuImage = loadImage("images/SuperMarioMenu3.png");
     private int selectedOption = 15000;
 
     public void init()
@@ -566,7 +566,7 @@ public class GameEngine extends GameCore
         g.setColor(Color.WHITE);
         g.drawString("Home: "+mapLoader.currentMap,700.0f,20.0f);
 
-        g.drawImage(menuImage,screen.getWidth()/3,screen.getHeight()/4,null);
+        g.drawImage(menuImage,screen.getWidth()/4,screen.getHeight()/5,null);
     }
 
     public void drawPause(Graphics2D g){
