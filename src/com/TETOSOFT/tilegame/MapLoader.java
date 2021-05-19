@@ -259,6 +259,11 @@ public class MapLoader
             loadImage("fly3.png"),
             loadImage("grub1.png"),
             loadImage("grub2.png"),
+            loadImage("p2.png"),
+            loadImage("p3.png"),
+            loadImage("p4.png"),
+            loadImage("p5.png"),
+            loadImage("p6.png"),
         };
 
         images[1] = new Image[images[0].length];
@@ -294,10 +299,16 @@ public class MapLoader
         
         for (int i=0; i<4; i++) 
         {
-            playerAnim[i] = createPlayerAnim (images[i][0]);
+            //playerAnim[i] = createPlayerAnim (images[i][0]);
             flyAnim[i] = createFlyAnim (images[i][1], images[i][1], images[i][3]);
             grubAnim[i] = createGrubAnim (images[i][4], images[i][5]);
         }
+        
+        playerAnim[2] = createPlayerAnim (images[2][0]);
+        playerAnim[3] = createPlayerAnim (images[3][0]);
+        
+        playerAnim[0] = createPlayerWalkAnim (images[0][6], images[0][7], images[0][8], images[0][9],images[0][10]);
+        playerAnim[1] = createPlayerWalkAnim (images[1][6], images[1][7], images[1][8], images[1][9],images[1][10]);
 
         // create creature sprites
         playerSprite = new Player (playerAnim[0], playerAnim[1],playerAnim[2], playerAnim[3]);
@@ -312,6 +323,17 @@ public class MapLoader
         anim.addFrame(player, 250);
      
         return anim;
+    }
+    
+    private Animation createPlayerWalkAnim(Image p2, Image p3, Image p4 , Image p5, Image p6)
+    {
+        Animation anim = new Animation();
+        anim.addFrame(p2,250);
+        anim.addFrame(p3,250);
+        anim.addFrame(p4,250);
+        anim.addFrame(p5,250);
+        anim.addFrame(p6,250);
+      return anim;
     }
 
 
