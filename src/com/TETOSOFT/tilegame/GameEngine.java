@@ -485,13 +485,9 @@ public class GameEngine extends GameCore
                 scoreCoin = 0;
                 score = 0;
                 if(numLives==0) {
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                    }
                     //Insert final score interface here, and stop it from crashing everytime
-                    stop();
+                    gameOver();
+                    
                 }
             }
         }
@@ -607,7 +603,5 @@ public class GameEngine extends GameCore
         g.drawString("Game Over",screen.getWidth()/2-15,screen.getHeight()/2+10);
     }
     
-    public void GameOver() {
-    	
-    }
+
 }

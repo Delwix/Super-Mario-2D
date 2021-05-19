@@ -29,7 +29,7 @@ public abstract class GameCore {
     protected ScreenManager screen;
     private boolean isPaused = false;
     private boolean inMenu;
-
+    private boolean isOver = false;
     /**
         Signals the game loop that it's time to quit
     */
@@ -58,6 +58,9 @@ public abstract class GameCore {
         isPaused = !isPaused;
     }
 
+    public void gameOver(){
+        isOver = !isOver;
+    }
     /**
         Calls init() and gameLoop()
     */
@@ -117,6 +120,7 @@ public abstract class GameCore {
         inMenu = true;
         isRunning = true;
         isPaused = false;
+        isOver = false;
     }
 
 
@@ -153,6 +157,11 @@ public abstract class GameCore {
                 g.dispose();
             }
 
+            if(isOver){
+                Graphics2D g = screen.getGraphics();
+                drawGameOver(g);
+                g.dispose();
+            }
             else{
                 long elapsedTime =
                         System.currentTimeMillis() - currTime;
@@ -192,5 +201,5 @@ public abstract class GameCore {
     */
     public abstract void draw(Graphics2D g);
     public abstract void drawPause(Graphics2D g);
-
+    public abstract void drawGameOver(Graphics2D g);
 }
