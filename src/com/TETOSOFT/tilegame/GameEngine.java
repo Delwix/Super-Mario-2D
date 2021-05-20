@@ -3,6 +3,8 @@ package com.TETOSOFT.tilegame;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 
 import com.TETOSOFT.graphics.*;
@@ -10,7 +12,8 @@ import com.TETOSOFT.input.*;
 import com.TETOSOFT.test.GameCore;
 import com.TETOSOFT.tilegame.sprites.*;
 
-import static java.lang.Math.abs;
+import javax.sound.sampled.*;
+
 
 /**
  * GameManager manages all parts of the game.
@@ -52,6 +55,9 @@ public class GameEngine extends GameCore
     private final Image tutoImage = loadImage("images/tuto.png");
     private int selectedOption = 15000;
 
+    private Clip audioClip;
+    private AudioInputStream audioStream;
+
     public void init()
     {
         super.init();
@@ -75,12 +81,13 @@ public class GameEngine extends GameCore
      * Closes any resurces used by the GameManager.
      */
     public void stop() {
+        stopMusic();
         super.stop();
-        
     }
 
     public void startGame(){
         super.startGame();
+        startMusic();
     }
 
     public void resumeGame() throws InterruptedException {
@@ -93,11 +100,36 @@ public class GameEngine extends GameCore
     }
 
     public void exitGame(){
+        stopMusic();
         super.exitGame();
     }
 
     public void pauseGame(){
         super.pauseGame();
+    }
+
+    public void startMusic(){
+        File audioFile = new File("sounds/bg-music.wav");
+        try {
+            audioStream = AudioSystem.getAudioInputStream(audioFile);
+            AudioFormat format = audioStream.getFormat();
+            DataLine.Info info = new DataLine.Info(Clip.class, format);
+            audioClip = (Clip) AudioSystem.getLine(info);
+            audioClip.open(audioStream);
+            audioClip.start();
+            audioClip.loop(4);
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void stopMusic(){
+        audioClip.close();
+        try {
+            audioStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initInput() {
@@ -186,7 +218,7 @@ public class GameEngine extends GameCore
             }
         }
     }
-    private void checkInput(long elapsedTime) 
+    private void checkInput(long elapsedTime)
     {
         
         if (exit.isPressed()) {
@@ -323,8 +355,7 @@ public class GameEngine extends GameCore
         int s1y = Math.round(s1.getY());
         int s2x = Math.round(s2.getX());
         int s2y = Math.round(s2.getY());
-        
-        // check if the two sprites' boundaries intersect
+// check if the two sprites' boundaries intersect
         return (s1x < s2x + s2.getWidth() &&
                 s2x < s1x + s1.getWidth() &&
                 s1y < s2y + s2.getHeight() &&
@@ -482,11 +513,13 @@ public class GameEngine extends GameCore
         } else if (collisionSprite instanceof Creature) {
             Creature badguy = (Creature)collisionSprite;
             if (canKill) {
+                playSound("sounds/enemy-die.wav");
                 // kill the badguy and make player bounce
                 badguy.setState(Creature.STATE_DYING);
                 player.setY(badguy.getY() - player.getHeight());
                 player.jump(true);
             } else {
+                playSound("sounds/mario-die.wav");
                 // player dies!
                 player.setState(Creature.STATE_DYING);
                 numLives--;
@@ -495,6 +528,8 @@ public class GameEngine extends GameCore
                 scoreCoin = 0;
                 score = 0;
                 if(numLives==0) {
+                    stopMusic();
+                    playSound("sounds/mario-gameover.wav");
                     //Insert final score interface here, and stop it from crashing everytime
                     try {
                         Thread.sleep(3000);
@@ -520,6 +555,7 @@ public class GameEngine extends GameCore
         
         if (powerUp instanceof PowerUp.Star) {
             // do something here, like give the player points
+            playSound("sounds/coin.wav");
             collectedStars++;
             scoreCoin++;
 //            System.out.println("The score is " + score);
@@ -533,8 +569,8 @@ public class GameEngine extends GameCore
             // change the music
             
         } else if (powerUp instanceof PowerUp.Goal) {
-            // advance to next map      
-      
+            // advance to next map
+            playSound("sounds/mario-yahoo.wav");
             map = mapLoader.loadNextMap();
             
         }
@@ -568,15 +604,6 @@ public class GameEngine extends GameCore
                 g.drawString("EXIT GAME",screen.getWidth()/2-60,screen.getHeight()/2+120);
                 break;
         }
-
-        g.setColor(Color.WHITE);
-        g.drawString("Press ESC for EXIT.",10.0f,20.0f);
-        g.setColor(Color.GREEN);
-        g.drawString("AAAAAAAA: "+collectedStars,300.0f,20.0f);
-        g.setColor(Color.YELLOW);
-        g.drawString("Bbbb: "+(numLives),500.0f,20.0f );
-        g.setColor(Color.WHITE);
-        g.drawString("Home: "+mapLoader.currentMap,700.0f,20.0f);
 
         g.drawImage(menuImage,screen.getWidth()/4,screen.getHeight()/5,null);
     }
@@ -624,6 +651,20 @@ public class GameEngine extends GameCore
         drawer.draw(g, map, screen.getWidth(), screen.getHeight());
         g.setColor(Color.RED);
         g.drawString("Game Over",screen.getWidth()/2-15,screen.getHeight()/2+10);
+    }
+
+    public void playSound(String sound){
+        File audioFileS = new File(sound);
+        try {
+            AudioInputStream audioStreamS = AudioSystem.getAudioInputStream(audioFileS);
+            AudioFormat formatS = audioStreamS.getFormat();
+            DataLine.Info info = new DataLine.Info(Clip.class, formatS);
+            Clip audioClipS = (Clip) AudioSystem.getLine(info);
+            audioClipS.open(audioStreamS);
+            audioClipS.start();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
     }
 
 
