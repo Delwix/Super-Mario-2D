@@ -30,6 +30,7 @@ public abstract class GameCore {
     private boolean isPaused = false;
     private boolean inMenu;
     private boolean isOver = false;
+    private boolean inTuto = false;
     /**
         Signals the game loop that it's time to quit
     */
@@ -122,7 +123,9 @@ public abstract class GameCore {
         isPaused = false;
         isOver = false;
     }
-
+     public void tutoScreen(){
+        inTuto = !inTuto;
+     }
 
     public Image loadImage(String fileName) {
         return new ImageIcon(fileName).getImage();
@@ -130,9 +133,16 @@ public abstract class GameCore {
 
     public void gameMenu() throws InterruptedException {
         while(inMenu){
-            updateMenu();
+
             Graphics2D g = screen.getGraphics();
-            drawMenu(g);
+            if(inTuto){
+                updateTuto();
+                drawTuto(g);
+            }
+            else{
+                updateMenu();
+                drawMenu(g);
+            }
             g.dispose();
             screen.update();
         }
@@ -140,7 +150,7 @@ public abstract class GameCore {
 
 
     public abstract void drawMenu(Graphics2D g);
-
+    public abstract void drawTuto(Graphics2D g);
     /**
         Runs through the game loop until stop() is called.
     */
@@ -193,6 +203,7 @@ public abstract class GameCore {
     public void update(long elapsedTime) {
         // do nothing
     }
+    public void updateTuto(){}
     public void updateMenu(){}
     public void updatePause() throws InterruptedException {}
     /**

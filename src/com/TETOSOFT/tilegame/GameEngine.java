@@ -49,6 +49,7 @@ public class GameEngine extends GameCore
     private int numLives=6;
 
     private final Image menuImage = loadImage("images/SuperMarioMenu3.png");
+    private final Image tutoImage = loadImage("images/tuto.png");
     private int selectedOption = 15000;
 
     public void init()
@@ -121,6 +122,11 @@ public class GameEngine extends GameCore
         inputManager.mapToKey(moveDown, KeyEvent.VK_DOWN);
     }
 
+    public void checkInputTuto(){
+        if(enter.isPressed() || exit.isPressed()){
+            tutoScreen();
+        }
+    }
     public void checkInputMenu(){
         if(moveUp.isPressed()){
             selectedOption -= 1;
@@ -137,7 +143,7 @@ public class GameEngine extends GameCore
                     startGame();
                     break;
                 case 1:
-                    System.out.println("OPTIONS");
+                    tutoScreen();
                     break;
                 case 2:
                     exitGame();
@@ -145,7 +151,9 @@ public class GameEngine extends GameCore
             }
         }
     }
-
+     public void tutoScreen(){
+        super.tutoScreen();
+     }
 
 
     public void checkInputPause() throws InterruptedException {
@@ -446,7 +454,9 @@ public class GameEngine extends GameCore
         }
         
     }
-
+    public void updateTuto(){
+        checkInputTuto();
+    }
     public void updateMenu(){
         checkInputMenu();
     }
@@ -537,7 +547,7 @@ public class GameEngine extends GameCore
                 g.setColor(Color.RED);
                 g.drawString("PLAY",screen.getWidth()/2-60,screen.getHeight()/2+60);
                 g.setColor(Color.WHITE);
-                g.drawString("OPTIONS",screen.getWidth()/2-60,screen.getHeight()/2+90);
+                    g.drawString("INSTRUCTIONS",screen.getWidth()/2-60,screen.getHeight()/2+90);
                 g.setColor(Color.WHITE);
                 g.drawString("EXIT GAME",screen.getWidth()/2-60,screen.getHeight()/2+120);
                 break;
@@ -545,7 +555,7 @@ public class GameEngine extends GameCore
                 g.setColor(Color.WHITE);
                 g.drawString("PLAY",screen.getWidth()/2-60,screen.getHeight()/2+60);
                 g.setColor(Color.RED);
-                g.drawString("OPTIONS",screen.getWidth()/2-60,screen.getHeight()/2+90);
+                g.drawString("INSTRUCTIONS",screen.getWidth()/2-60,screen.getHeight()/2+90);
                 g.setColor(Color.WHITE);
                 g.drawString("EXIT GAME",screen.getWidth()/2-60,screen.getHeight()/2+120);
                 break;
@@ -553,7 +563,7 @@ public class GameEngine extends GameCore
                 g.setColor(Color.WHITE);
                 g.drawString("PLAY",screen.getWidth()/2-60,screen.getHeight()/2+60);
                 g.setColor(Color.WHITE);
-                g.drawString("OPTIONS",screen.getWidth()/2-60,screen.getHeight()/2+90);
+                g.drawString("INSTRUCTIONS",screen.getWidth()/2-60,screen.getHeight()/2+90);
                 g.setColor(Color.RED);
                 g.drawString("EXIT GAME",screen.getWidth()/2-60,screen.getHeight()/2+120);
                 break;
@@ -602,12 +612,19 @@ public class GameEngine extends GameCore
         g.setColor(Color.RED);
         g.drawString("PAUSED",screen.getWidth()/2-15,screen.getHeight()/2+10);
     }
- 
+
+    public  void drawTuto(Graphics2D g){
+        drawer.draw(g, map, screen.getWidth(), screen.getHeight());
+        g.drawImage(tutoImage,50,50,null);
+        g.setColor(Color.RED);
+        g.drawString("← Back",50,screen.getHeight()/6*5);
+    }
+
     public void drawGameOver(Graphics2D g){
         drawer.draw(g, map, screen.getWidth(), screen.getHeight());
         g.setColor(Color.RED);
         g.drawString("Game Over",screen.getWidth()/2-15,screen.getHeight()/2+10);
     }
-    
+
 
 }
