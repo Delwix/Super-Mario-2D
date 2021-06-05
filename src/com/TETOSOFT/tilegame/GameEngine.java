@@ -27,7 +27,6 @@ public class GameEngine extends GameCore
     }
 
     public static final float GRAVITY = 0.002f;
-
     private Point currentPoint = new Point();
     private Point pointCache = new Point();
     private TileMap map;
@@ -52,6 +51,7 @@ public class GameEngine extends GameCore
     private int numLives=3;
 
     private final Image menuImage = loadImage("images/SuperMarioMenu3.png");
+    private final Image gameOverImage = loadImage("images/GO.jpg");
     private final Image tutoImage = loadImage("images/tuto.png");
     private int selectedOption = 15000;
 
@@ -279,7 +279,7 @@ public class GameEngine extends GameCore
                 if (score > topScore) {
                     topScore = score;
                 }
-                //System.out.println("the score is " + score);
+                System.out.println("the score is " + score);
                 /*if (currentPoint.getY() != 9.0) {
                     System.out.println("i moved right !");
                     currentScoreXaxis = currentScoreXaxis + 0.01;
@@ -300,7 +300,7 @@ public class GameEngine extends GameCore
         
         drawer.draw(g, map, screen.getWidth(), screen.getHeight());
         g.setColor(Color.WHITE);
-        g.drawString("Press ESC for EXIT.",10.0f,20.0f);
+        g.drawString("Score "+score ,10.0f,20.0f);
         g.setColor(Color.GREEN);
         g.drawString("Coins: "+collectedStars,300.0f,20.0f);
         g.setColor(Color.YELLOW);
@@ -669,14 +669,28 @@ public class GameEngine extends GameCore
         g.setColor(Color.RED);
         g.drawString("PAUSED",screen.getWidth()/2-15,screen.getHeight()/2+10);
     }
+
+
     public void drawGameOver(Graphics2D g){
-        drawer.draw(g, map, screen.getWidth(), screen.getHeight());
+        g.setColor(Color.BLACK);
+        g.fillRect(0,0,screen.getWidth(),screen.getHeight());
+
+        drawUI(g);
+
+        Font oldFont = g.getFont();
+        g.setFont(new Font("TimesRoman", Font.PLAIN, 30));
+        g.setColor(Color.WHITE);
+        FontMetrics metrics = g.getFontMetrics(oldFont);
+        g.drawString("GAME OVER",(screen.getWidth() - metrics.stringWidth("GAME OVER") * 2)/2,(screen.getHeight() - metrics.getHeight())/2 + metrics.getAscent());
+        g.setFont(oldFont);
+
         switch (selectedOption%2){
             case 0:
                 g.setColor(Color.RED);
                 g.drawString("RESTART",screen.getWidth()/2-60,screen.getHeight()/2+90);
                 g.setColor(Color.WHITE);
                 g.drawString("EXIT GAME",screen.getWidth()/2-60,screen.getHeight()/2+120);
+
                 break;
             case 1:
                 g.setColor(Color.WHITE);
@@ -686,14 +700,27 @@ public class GameEngine extends GameCore
                 break;
 
         }
-        g.setColor(Color.RED);
-        g.drawString("GAME OVER",screen.getWidth()/2-15,screen.getHeight()/2+10);
+        g.setColor(Color.WHITE);
     }
+
+
     public  void drawTuto(Graphics2D g){
         drawer.draw(g, map, screen.getWidth(), screen.getHeight());
         g.drawImage(tutoImage,50,50,null);
         g.setColor(Color.RED);
         g.drawString("← Back",50,screen.getHeight()/6*5);
+    }
+
+
+    public void drawUI(Graphics2D g){
+        g.setColor(Color.WHITE);
+        g.drawString("TOP SCORE "+topScore,10.0f,20.0f);
+        g.setColor(Color.GREEN);
+        g.drawString("Coins: "+collectedStars,300.0f,20.0f);
+        g.setColor(Color.YELLOW);
+        g.drawString("Lives: "+(numLives),500.0f,20.0f );
+        g.setColor(Color.WHITE);
+        g.drawString("Home: "+mapLoader.currentMap,700.0f,20.0f);
     }
 
 
