@@ -28,8 +28,8 @@ public abstract class GameCore {
     private boolean isRunning;
     protected ScreenManager screen;
     private boolean isPaused = false;
-    private boolean inMenu;
     private boolean isOver = false;
+    private boolean inMenu;
     private boolean inTuto = false;
     /**
         Signals the game loop that it's time to quit
@@ -47,6 +47,7 @@ public abstract class GameCore {
     }
 
     public void restartGame() throws InterruptedException {
+        isOver = false;
         isPaused = false;
         gameLoop();
     }
@@ -59,9 +60,10 @@ public abstract class GameCore {
         isPaused = !isPaused;
     }
 
-    public void gameOver(){
+    public void gameOver() throws InterruptedException {
         isOver = !isOver;
     }
+
     /**
         Calls init() and gameLoop()
     */
@@ -123,7 +125,8 @@ public abstract class GameCore {
         isPaused = false;
         isOver = false;
     }
-     public void tutoScreen(){
+
+    public void tutoScreen(){
         inTuto = !inTuto;
      }
 
@@ -166,8 +169,8 @@ public abstract class GameCore {
                 drawPause(g);
                 g.dispose();
             }
-
-            if(isOver){
+            else if(isOver){
+                updateGameOver();
                 Graphics2D g = screen.getGraphics();
                 drawGameOver(g);
                 g.dispose();
@@ -200,12 +203,13 @@ public abstract class GameCore {
         Updates the state of the game/animation based on the
         amount of elapsed time that has passed.
     */
-    public void update(long elapsedTime) {
+    public void update(long elapsedTime) throws InterruptedException {
         // do nothing
     }
     public void updateTuto(){}
     public void updateMenu(){}
     public void updatePause() throws InterruptedException {}
+    public void updateGameOver() throws InterruptedException {}
     /**
         Draws to the screen. Subclasses must override this
         method.

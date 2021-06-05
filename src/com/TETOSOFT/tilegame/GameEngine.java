@@ -49,7 +49,7 @@ public class GameEngine extends GameCore
     private int topScore =0;
     private int gameScore =0;
     private int collectedStars=0;
-    private int numLives=6;
+    private int numLives=3;
 
     private final Image menuImage = loadImage("images/SuperMarioMenu3.png");
     private final Image tutoImage = loadImage("images/tuto.png");
@@ -95,8 +95,16 @@ public class GameEngine extends GameCore
     }
 
     public void restartGame() throws InterruptedException {
+        stopMusic();
+        numLives = 3;
         map = mapLoader.reloadMap();
+        startMusic();
         super.restartGame();
+    }
+
+    public void gameOver() throws InterruptedException {
+        super.gameOver();
+        //restartGame();
     }
 
     public void exitGame(){
@@ -187,6 +195,27 @@ public class GameEngine extends GameCore
         super.tutoScreen();
      }
 
+     public void checkinputGameOver() throws InterruptedException {
+         if(exit.isPressed()){
+             exitGame();
+         }
+         if(moveUp.isPressed()){
+             selectedOption -= 1;
+         }
+         if(moveDown.isPressed()){
+             selectedOption += 1;
+         }
+         if(enter.isPressed()){
+             switch(selectedOption%2){
+                 case 0:
+                     restartGame();
+                     break;
+                 case 1:
+                     exitGame();
+                     break;
+             }
+         }
+     }
 
     public void checkInputPause() throws InterruptedException {
         if(pause.isPressed()){
@@ -200,9 +229,6 @@ public class GameEngine extends GameCore
         }
         if(moveDown.isPressed()){
             selectedOption += 1;
-        }
-        if(exit.isPressed()){
-            exitGame();
         }
         if(enter.isPressed()){
             switch(selectedOption%3){
@@ -253,7 +279,7 @@ public class GameEngine extends GameCore
                 if (score > topScore) {
                     topScore = score;
                 }
-                System.out.println("the score is " + score);
+                //System.out.println("the score is " + score);
                 /*if (currentPoint.getY() != 9.0) {
                     System.out.println("i moved right !");
                     currentScoreXaxis = currentScoreXaxis + 0.01;
@@ -388,7 +414,7 @@ public class GameEngine extends GameCore
      * Updates Animation, position, and velocity of all Sprites
      * in the current map.
      */
-    public void update(long elapsedTime) {
+    public void update(long elapsedTime) throws InterruptedException {
         Creature player = (Creature)map.getPlayer();
         
         
@@ -428,7 +454,7 @@ public class GameEngine extends GameCore
      * aren't flying, and checks collisions.
      */
     private void updateCreature(Creature creature,
-            long elapsedTime) {
+            long elapsedTime) throws InterruptedException {
         
         // apply gravity
         if (!creature.isFlying()) {
@@ -491,17 +517,21 @@ public class GameEngine extends GameCore
     public void updateMenu(){
         checkInputMenu();
     }
+
     public void updatePause() throws InterruptedException {
         checkInputPause();
     }
-    
+
+    public void updateGameOver() throws InterruptedException {
+        checkinputGameOver();
+    }
     /**
      * Checks for Player collision with other Sprites. If
      * canKill is true, collisions with Creatures will kill
      * them.
      */
     public void checkPlayerCollision(Player player,
-            boolean canKill) {
+            boolean canKill) throws InterruptedException {
         if (!player.isAlive()) {
             return;
         }
@@ -532,12 +562,12 @@ public class GameEngine extends GameCore
                     playSound("sounds/mario-gameover.wav");
                     //Insert final score interface here, and stop it from crashing everytime
                     try {
-                        Thread.sleep(3000);
+                        Thread.sleep(2000);
                     } catch (InterruptedException ex) {
                         ex.printStackTrace();
-                    }                	
-                    gameOver();                   
-                    super.lazilyExit();
+                    }
+                    gameOver();
+
                     
                 }
             }
@@ -639,7 +669,26 @@ public class GameEngine extends GameCore
         g.setColor(Color.RED);
         g.drawString("PAUSED",screen.getWidth()/2-15,screen.getHeight()/2+10);
     }
+    public void drawGameOver(Graphics2D g){
+        drawer.draw(g, map, screen.getWidth(), screen.getHeight());
+        switch (selectedOption%2){
+            case 0:
+                g.setColor(Color.RED);
+                g.drawString("RESTART",screen.getWidth()/2-60,screen.getHeight()/2+90);
+                g.setColor(Color.WHITE);
+                g.drawString("EXIT GAME",screen.getWidth()/2-60,screen.getHeight()/2+120);
+                break;
+            case 1:
+                g.setColor(Color.WHITE);
+                g.drawString("RESTART",screen.getWidth()/2-60,screen.getHeight()/2+90);
+                g.setColor(Color.RED);
+                g.drawString("EXIT GAME",screen.getWidth()/2-60,screen.getHeight()/2+120);
+                break;
 
+        }
+        g.setColor(Color.RED);
+        g.drawString("GAME OVER",screen.getWidth()/2-15,screen.getHeight()/2+10);
+    }
     public  void drawTuto(Graphics2D g){
         drawer.draw(g, map, screen.getWidth(), screen.getHeight());
         g.drawImage(tutoImage,50,50,null);
@@ -647,11 +696,6 @@ public class GameEngine extends GameCore
         g.drawString("← Back",50,screen.getHeight()/6*5);
     }
 
-    public void drawGameOver(Graphics2D g){
-        drawer.draw(g, map, screen.getWidth(), screen.getHeight());
-        g.setColor(Color.RED);
-        g.drawString("Game Over",screen.getWidth()/2-15,screen.getHeight()/2+10);
-    }
 
     public void playSound(String sound){
         File audioFileS = new File(sound);
