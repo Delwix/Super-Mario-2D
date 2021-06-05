@@ -24,6 +24,9 @@
         <copy todir="Export/maps">
             <fileset dir="maps" includes="**"/>
         </copy>
+        <copy todir="Export/sounds">
+            <fileset dir="sounds" includes="**"/>
+        </copy>
     </target>
     <target name="package" depends="compile,copy-media">
         <mkdir dir="Export"/>
