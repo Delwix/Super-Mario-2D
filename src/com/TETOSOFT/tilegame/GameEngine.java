@@ -708,7 +708,7 @@ public class GameEngine extends GameCore
         drawer.draw(g, map, screen.getWidth(), screen.getHeight());
         g.drawImage(tutoImage,50,50,null);
         g.setColor(Color.RED);
-        g.drawString("← Back",50,screen.getHeight()/6*5);
+        g.drawString("<= Back",50,screen.getHeight()/6*5);
     }
 
 
